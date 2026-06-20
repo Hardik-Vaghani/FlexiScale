@@ -9,3 +9,8 @@ interface ScaleStrategy {
         bucket: ScreenBucket
     ): ScaleProfile
 }
+
+//Future Benefit:
+//class TabletOnlyStrategy : ScaleStrategy
+//class Material3Strategy : ScaleStrategy
+//class CustomStrategy : ScaleStrategy
