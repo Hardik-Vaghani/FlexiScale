@@ -1,0 +1,365 @@
+# FlexiScale Architecture Rule Book
+
+Project Name:
+FlexiScale
+
+Group:
+io.github.hardikvaghani.flexiscale
+
+Author:
+Hardik Vaghani
+
+---
+
+## PROJECT VISION
+
+FlexiScale is a responsive UI ecosystem for Android.
+
+The project supports:
+
+1. XML Based UI
+2. Jetpack Compose UI
+3. Phones
+4. Foldables
+5. Tablets
+6. Desktop / ChromeOS
+7. TV
+8. Wear OS
+
+The project is designed as a multi-module library ecosystem.
+
+---
+
+## MODULE OVERVIEW
+
+FlexiScale
+│
+├── flexiscale-runtime
+├── flexiscale-generator
+├── flexiscale-compose
+└── flexiscale-tokens
+
+---
+
+## MODULE: flexiscale-runtime
+
+Purpose:
+
+Provides runtime scaling engine.
+
+Contains:
+
+* ScreenBucket
+* ScaleProfile
+* ScaleStrategy
+* ScreenBucketResolver
+* Responsive Scaling Logic
+
+Used By:
+
+* flexiscale-compose
+* flexiscale-generator
+
+Published:
+
+YES
+
+Artifact:
+
+io.github.hardikvaghani:flexiscale-runtime
+
+Consumer Access:
+
+YES
+
+---
+
+## MODULE: flexiscale-generator
+
+Purpose:
+
+Internal development tool.
+
+Responsible for generating XML dimension resources.
+
+Generates:
+
+values-swXXXdp/
+dimensions.xml
+
+Used By:
+
+Project Maintainer Only
+
+Published:
+
+NO
+
+Artifact:
+
+NONE
+
+Consumer Access:
+
+NO
+
+Notes:
+
+This module exists only to create resource files.
+
+Users should never depend on this module.
+
+Generator output must be committed into
+flexiscale-tokens module.
+
+---
+
+## MODULE: flexiscale-tokens
+
+Purpose:
+
+Provides pre-generated XML dimensions.
+
+Contains:
+
+src/main/res/
+
+values-sw192dp
+values-sw240dp
+values-sw320dp
+values-sw360dp
+values-sw411dp
+values-sw480dp
+values-sw600dp
+values-sw720dp
+values-sw840dp
+values-sw960dp
+values-sw1280dp
+values-sw1440dp
+...
+
+Published:
+
+YES
+
+Artifact:
+
+io.github.hardikvaghani:flexiscale-tokens
+
+Consumer Access:
+
+YES
+
+XML Usage:
+
+android:padding="@dimen/app_px_16_to_dp"
+
+android:textSize="@dimen/app_px_14_to_sp"
+
+Notes:
+
+This is the FlexiScale equivalent of SDP / SSP.
+
+---
+
+## MODULE: flexiscale-compose
+
+Purpose:
+
+Compose integration layer.
+
+Contains:
+
+Compose modifiers
+Compose dimension helpers
+Compose responsive APIs
+
+Examples:
+
+16.rdp()
+
+14.rsp()
+
+ResponsivePadding()
+
+ResponsiveText()
+
+Published:
+
+YES
+
+Artifact:
+
+io.github.hardikvaghani:flexiscale-compose
+
+Consumer Access:
+
+YES
+
+Depends On:
+
+flexiscale-runtime
+
+---
+
+## RESOURCE GENERATION FLOW
+
+Developer runs:
+
+./gradlew :flexiscale-generator:run
+
+↓
+
+Generator creates XML resources
+
+↓
+
+Output copied to:
+
+flexiscale-tokens/src/main/res/
+
+↓
+
+Commit
+
+↓
+
+GitHub
+
+↓
+
+Maven Central
+
+↓
+
+Consumer App
+
+---
+
+## WHAT GETS PUBLISHED
+
+Publish:
+
+✓ flexiscale-runtime
+
+✓ flexiscale-compose
+
+✓ flexiscale-tokens
+
+Do Not Publish:
+
+✗ flexiscale-generator
+
+---
+
+## XML USERS
+
+Dependency:
+
+implementation(
+"io.github.hardikvaghani:flexiscale-tokens"
+)
+
+Usage:
+
+@dimen/app_px_16_to_dp
+
+@dimen/app_px_14_to_sp
+
+---
+
+## COMPOSE USERS
+
+Dependencies:
+
+implementation(
+"io.github.hardikvaghani:flexiscale-runtime"
+)
+
+implementation(
+"io.github.hardikvaghani:flexiscale-compose"
+)
+
+---
+
+## IMPORTANT RULES
+
+Rule 1
+
+Generator never contains Android resources.
+
+Rule 2
+
+Tokens module is the only XML resource module.
+
+Rule 3
+
+Runtime never depends on Compose.
+
+Rule 4
+
+Compose depends on Runtime.
+
+Rule 5
+
+Generator depends on Runtime.
+
+Rule 6
+
+Consumers never use Generator.
+
+Rule 7
+
+All XML dimensions are generated automatically.
+
+Rule 8
+
+Never manually edit generated XML files.
+
+Always regenerate them.
+
+Rule 9
+
+Generator is a developer tool.
+
+Tokens are a consumer library.
+
+Rule 10
+
+Keep Runtime platform-independent as much as possible.
+
+---
+
+## CURRENT ROADMAP
+
+Phase 1
+✓ Runtime
+
+Phase 2
+✓ Generator
+
+Phase 3
+⏳ Tokens Resource Generation
+
+Phase 4
+⏳ Compose APIs
+
+Phase 5
+⏳ Maven Central Publishing
+
+Phase 6
+⏳ Documentation
+
+Phase 7
+⏳ Sample Apps
+
+---
+इस architecture में:
+
+runtime      ❌ hidden
+
+generator    ❌ hidden
+
+compose      ❌ optional
+
+tokens       ✅ public

@@ -7,17 +7,27 @@ import java.nio.file.Paths
 
 fun main() {
 
+    /**
+     * Generated files are stored under build/generated/flexiscale.
+     * This follows Gradle conventions and keeps generated artifacts
+     * separate from source code.
+     *
+     * Paths.get(System.getProperty("user.dir"), "generated")
+     * Paths.get("generated")
+     * Paths.get("build/generated/flexiscale")
+     * Paths.get("build", "generated", "flexiscale")
+     * Paths.get("flexiscale-generator", "build", "generated", "flexiscale")
+     * Paths.get(System.getProperty("user.dir"),"flexiscale-generator", "build", "generated", "flexiscale")
+     */
+    val outputDirectory = Paths.get(System.getProperty("user.dir"),"flexiscale-generator", "build", "generated", "flexiscale")
+
     val generator =
         FlexiScaleGenerator(
-            config =
-                GeneratorConfig.DEFAULT,
+            config = GeneratorConfig.DEFAULT,
 
-            writer =
-                ResourceFolderWriter(
-                    outputDirectory =
-                        Paths.get("generated")
-                )
+            writer = ResourceFolderWriter(outputDirectory = outputDirectory)
         )
+
 
     generator.generateAll()
 
@@ -25,3 +35,9 @@ fun main() {
         "FlexiScale XML generation completed."
     )
 }
+
+// Run those commands and create your generator folder with variation files:-
+// ./gradlew :flexiscale-generator:run --stacktrace
+    // OR
+// ./gradlew :flexiscale-generator:run
+// find generated -type f | wc -l

@@ -1,6 +1,7 @@
 package io.github.hardikvaghani.flexiscale.generator.generator
 
 import io.github.hardikvaghani.flexiscale.generator.model.*
+import java.util.Locale
 
 class XmlDimensionGenerator(
     private val config: GeneratorConfig
@@ -91,8 +92,10 @@ class XmlDimensionGenerator(
         value: Double
     ): String {
 
-        return value
-            .toString()
-            .replace(".", "_")
+        return String.format(
+            Locale.US,
+            "%.2f",
+            value
+        ).replace(".", "_")
     }
 }
