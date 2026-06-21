@@ -18,8 +18,9 @@ fun main() {
      * Paths.get("build", "generated", "flexiscale")
      * Paths.get("flexiscale-generator", "build", "generated", "flexiscale")
      * Paths.get(System.getProperty("user.dir"),"flexiscale-generator", "build", "generated", "flexiscale")
+     * Paths.get(System.getProperty("user.dir"),"flexiscale-resources", "src", "main", "res")
      */
-    val outputDirectory = Paths.get(System.getProperty("user.dir"),"flexiscale-generator", "build", "generated", "flexiscale")
+    val outputDirectory = Paths.get(System.getProperty("user.dir"),"flexiscale-resources", "src", "main", "res")
 
     val generator =
         FlexiScaleGenerator(

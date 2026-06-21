@@ -12,6 +12,15 @@
 // Learn more about structuring projects with Gradle - https://docs.gradle.org/8.7/userguide/multi_project_builds.html
 import org.gradle.api.initialization.resolve.RepositoriesMode
 
+pluginManagement {
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 dependencyResolutionManagement {
 
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -38,3 +47,4 @@ include(
 //include("flexiscale-compose")
 //include("flexiscale-generator")
 //include("flexiscale-tokens")
+include("flexiscale-resources")

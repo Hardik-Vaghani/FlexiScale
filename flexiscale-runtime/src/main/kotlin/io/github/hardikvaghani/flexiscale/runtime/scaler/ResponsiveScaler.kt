@@ -1,7 +1,8 @@
 package io.github.hardikvaghani.flexiscale.runtime.scaler
 
-import io.github.hardikvaghani.flexiscale.runtime.model.*
-import io.github.hardikvaghani.flexiscale.runtime.strategy.*
+import io.github.hardikvaghani.flexiscale.runtime.model.ScreenBucket
+import io.github.hardikvaghani.flexiscale.runtime.strategy.DefaultScaleStrategy
+import io.github.hardikvaghani.flexiscale.runtime.strategy.ScaleStrategy
 
 class ResponsiveScaler(
     private val strategy: ScaleStrategy =

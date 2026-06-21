@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/flexiscale-compose" />
             <option value="$PROJECT_DIR$/flexiscale-generator" />
+            <option value="$PROJECT_DIR$/flexiscale-resources" />
             <option value="$PROJECT_DIR$/flexiscale-runtime" />
             <option value="$PROJECT_DIR$/flexiscale-tokens" />
           </set>
