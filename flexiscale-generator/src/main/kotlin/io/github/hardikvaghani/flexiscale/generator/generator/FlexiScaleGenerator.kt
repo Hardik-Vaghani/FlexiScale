@@ -1,6 +1,5 @@
 package io.github.hardikvaghani.flexiscale.generator.generator
 
-import io.github.hardikvaghani.flexiscale.generator.model.BucketOutput
 import io.github.hardikvaghani.flexiscale.generator.model.GeneratorConfig
 import io.github.hardikvaghani.flexiscale.generator.writer.ResourceFolderWriter
 import io.github.hardikvaghani.flexiscale.runtime.model.ScreenBucket
@@ -10,9 +9,9 @@ class FlexiScaleGenerator(
     private val writer: ResourceFolderWriter
 ) {
 
-    fun generateAll(): List<BucketOutput> {
+    fun generateAll(): Int {
 
-        val outputs = mutableListOf<BucketOutput>()
+        var generatedCount = 0
 
         ScreenBucket.allBuckets.forEach { bucket ->
 
@@ -24,7 +23,7 @@ class FlexiScaleGenerator(
 
             writer.writeSingle(output)
 
-            outputs.add(output)
+            generatedCount++
 
             if (bucket.minWidthDp % 100 == 0) {
                 println(
@@ -35,6 +34,6 @@ class FlexiScaleGenerator(
             }
         }
 
-        return outputs
+        return generatedCount
     }
 }

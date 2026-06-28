@@ -37,8 +37,8 @@ class ResourceFolderWriter(
                 output.fileName
             )
 
-        xmlFile.writeText(
-            xmlWriter.write(output)
-        )
+        xmlFile.bufferedWriter().use { writer ->
+            xmlWriter.write(output, writer)
+        }
     }
 }

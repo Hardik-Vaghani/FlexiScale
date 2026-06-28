@@ -5,6 +5,7 @@ import io.github.hardikvaghani.flexiscale.generator.model.DimensionEntry
 import io.github.hardikvaghani.flexiscale.generator.model.DimensionUnit
 import io.github.hardikvaghani.flexiscale.generator.writer.XmlWriter
 import io.github.hardikvaghani.flexiscale.runtime.model.ScreenBucket
+import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
@@ -14,8 +15,10 @@ class XmlWriterTest {
     @Test
     fun write_outputsValidResourceXmlWithFormattedDimensions() {
 
-        val xml =
-            XmlWriter().write(
+        val stringWriter = StringWriter()
+
+        XmlWriter().write(
+            output =
                 BucketOutput(
                     bucket = ScreenBucket(360, ""),
                     entries =
@@ -31,13 +34,16 @@ class XmlWriterTest {
                                 unit = DimensionUnit.SP
                             )
                         )
-                )
-            )
+                ),
+            writer = stringWriter
+        )
+
+        val xml = stringWriter.toString()
 
         assertTrue(xml.startsWith("<?xml version=\"1.0\" encoding=\"utf-8\"?>"))
         assertContains(xml, "<resources>")
         assertContains(xml, "<dimen name=\"app_px_1_00_to_dp\">1.00000dp</dimen>")
         assertContains(xml, "<dimen name=\"app_px_1_00_to_sp_neg\">-1.00000sp</dimen>")
-        assertTrue(xml.endsWith("</resources>"))
+        assertTrue(xml.trimEnd().endsWith("</resources>"))
     }
 }

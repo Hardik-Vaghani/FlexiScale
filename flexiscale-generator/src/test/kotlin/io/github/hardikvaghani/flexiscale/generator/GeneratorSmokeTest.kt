@@ -18,7 +18,7 @@ class GeneratorSmokeTest {
         val outputDirectory =
             Files.createTempDirectory("flexiscale-generator-test")
 
-        val outputs =
+        val generatedCount =
             FlexiScaleGenerator(
                 config =
                     GeneratorConfig(
@@ -35,7 +35,7 @@ class GeneratorSmokeTest {
 
         assertEquals(
             expected = ScreenBucket.allBuckets.size,
-            actual = outputs.size
+            actual = generatedCount
         )
 
         ScreenBucket.allBuckets.forEach { bucket ->

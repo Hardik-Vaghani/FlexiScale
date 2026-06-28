@@ -1,39 +1,36 @@
 package io.github.hardikvaghani.flexiscale.generator.writer
 
-import io.github.hardikvaghani.flexiscale.generator.model.*
+import io.github.hardikvaghani.flexiscale.generator.model.BucketOutput
+import io.github.hardikvaghani.flexiscale.generator.model.DimensionUnit
+import java.io.Writer
 import java.util.Locale
 
 class XmlWriter {
 
     fun write(
-        output: BucketOutput
-    ): String {
+        output: BucketOutput,
+        writer: Writer
+    ) {
+        writer.appendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
+        writer.appendLine("<resources>")
+        writer.appendLine()
 
-        val body =
-            output.entries.joinToString("\n") {
-
-                val unit =
-                    when (it.unit) {
-                        DimensionUnit.DP -> "dp"
-                        DimensionUnit.SP -> "sp"
-                    }
-
-                String.format(
-                    Locale.US,
-                    "<dimen name=\"%s\">%.5f%s</dimen>",
-                    it.name,
-                    it.value,
-                    unit
-                )
+        output.entries.forEach { entry ->
+            val unit = when (entry.unit) {
+                DimensionUnit.DP -> "dp"
+                DimensionUnit.SP -> "sp"
             }
+            writer.appendLine(
+                "<dimen name=\"${entry.name}\">${
+                    "%.5f".format(
+                        Locale.US,
+                        entry.value
+                    )
+                }$unit</dimen>"
+            )
+        }
 
-        return """
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-$body
-
-</resources>
-""".trimIndent()
+        writer.appendLine()
+        writer.appendLine("</resources>")
     }
 }

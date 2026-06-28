@@ -1,5 +1,6 @@
 package io.github.hardikvaghani.flexiscale.resources
 
+import java.nio.file.Files
 import java.nio.file.Path
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.io.path.exists
@@ -12,17 +13,14 @@ import kotlin.test.assertTrue
 class FlexiScaleResourcesTest {
 
     @Test
-    fun allExpectedBucketFoldersContainDimensionsXml() {
+    fun allDiscoveredBucketFoldersContainDimensionsXml() {
 
-        expectedBuckets.forEach { bucket ->
-            val file =
-                resourcesDirectory
-                    .resolve("values-sw${bucket}dp")
-                    .resolve("dimensions.xml")
+        discoveredBuckets.forEach { (folderName, absolutePath) ->
+            val file = absolutePath.resolve("dimensions.xml")
 
             assertTrue(
                 actual = file.exists(),
-                message = "Missing dimensions.xml for values-sw${bucket}dp"
+                message = "Missing dimensions.xml in $folderName"
             )
         }
     }
@@ -30,11 +28,8 @@ class FlexiScaleResourcesTest {
     @Test
     fun allDimensionsFilesAreValidAndroidResourceXml() {
 
-        expectedBuckets.forEach { bucket ->
-            val file =
-                resourcesDirectory
-                    .resolve("values-sw${bucket}dp")
-                    .resolve("dimensions.xml")
+        discoveredBuckets.forEach { (folderName, absolutePath) ->
+            val file = absolutePath.resolve("dimensions.xml")
 
             val document =
                 DocumentBuilderFactory
@@ -45,7 +40,7 @@ class FlexiScaleResourcesTest {
             assertEquals(
                 expected = "resources",
                 actual = document.documentElement.nodeName,
-                message = "Invalid root tag for values-sw${bucket}dp"
+                message = "Invalid root tag in $folderName/dimensions.xml"
             )
         }
     }
@@ -53,17 +48,16 @@ class FlexiScaleResourcesTest {
     @Test
     fun generatedDimensionsContainCompleteConfiguredRange() {
 
-        expectedBuckets.forEach { bucket ->
+        discoveredBuckets.forEach { (folderName, absolutePath) ->
             val xml =
-                resourcesDirectory
-                    .resolve("values-sw${bucket}dp")
+                absolutePath
                     .resolve("dimensions.xml")
                     .readText()
 
             assertEquals(
                 expected = expectedDimensionCountPerBucket,
                 actual = Regex("<dimen ").findAll(xml).count(),
-                message = "Unexpected dimension count for values-sw${bucket}dp"
+                message = "Unexpected dimension count in $folderName"
             )
 
             assertTrue(xml.contains("name=\"app_px_0_10_to_dp\""))
@@ -80,10 +74,9 @@ class FlexiScaleResourcesTest {
     @Test
     fun generatedDimensionsUseOnlyDpAndSpUnits() {
 
-        expectedBuckets.forEach { bucket ->
+        discoveredBuckets.forEach { (folderName, absolutePath) ->
             val xml =
-                resourcesDirectory
-                    .resolve("values-sw${bucket}dp")
+                absolutePath
                     .resolve("dimensions.xml")
                     .readText()
 
@@ -94,7 +87,7 @@ class FlexiScaleResourcesTest {
                     assertEquals(
                         expected = expectedDimensionCountPerBucket,
                         actual = validDimensionCount,
-                        message = "Malformed dimension entries in values-sw${bucket}dp"
+                        message = "Malformed dimension entries in $folderName"
                     )
                 }
         }
@@ -130,45 +123,41 @@ class FlexiScaleResourcesTest {
         }
     }
 
+    /**
+     * Discovers all values-swXXXdp bucket folders in the resources directory
+     * by scanning the filesystem. This keeps the test in sync with the
+     * generator output automatically.
+     *
+     * The result is cached so directory traversal happens only once.
+     */
+    private val discoveredBuckets: List<Pair<String, Path>> by lazy {
+        val resDir = resourcesDirectory
+
+        Files
+            .newDirectoryStream(resDir) { path ->
+                path.fileName
+                    .toString()
+                    .startsWith("values-sw") &&
+                    path.isDirectory()
+            }
+            .use { stream ->
+                stream
+                    .map { path ->
+                        path.fileName.toString() to path
+                    }
+                    .sortedBy { it.first }
+                    .toList()
+            }
+    }
+
     private companion object {
 
+        /**
+         * GeneratorConfig.DEFAULT produces:
+         * - start=0.1, end=500.0, step=0.1 → 5000 values
+         * - generateDp=true, generateSp=true, includeNegative=true
+         * - 5000 × 4 = 20,000 entries per bucket
+         */
         private const val expectedDimensionCountPerBucket = 20_000
-
-        private val expectedBuckets =
-            listOf(
-                192,
-                240,
-                280,
-                300,
-                320,
-                330,
-                360,
-                390,
-                411,
-                420,
-                450,
-                480,
-                510,
-                540,
-                570,
-                600,
-                640,
-                680,
-                720,
-                760,
-                800,
-                840,
-                900,
-                960,
-                1024,
-                1080,
-                1200,
-                1280,
-                1366,
-                1440,
-                1600,
-                1920,
-                2560
-            )
     }
 }
