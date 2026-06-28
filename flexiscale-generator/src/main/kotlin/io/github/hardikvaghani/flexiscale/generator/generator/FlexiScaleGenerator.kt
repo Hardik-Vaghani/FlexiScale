@@ -12,16 +12,28 @@ class FlexiScaleGenerator(
 
     fun generateAll(): List<BucketOutput> {
 
-        val outputs =
-            ScreenBucket.entries.map { bucket ->
+        val outputs = mutableListOf<BucketOutput>()
 
+        ScreenBucket.allBuckets.forEach { bucket ->
+
+            val output =
                 BucketDimensionGenerator(
                     generator =
                         XmlDimensionGenerator(config)
                 ).generate(bucket)
-            }
 
-        writer.write(outputs)
+            writer.writeSingle(output)
+
+            outputs.add(output)
+
+            if (bucket.minWidthDp % 100 == 0) {
+                println(
+                    "Generated dimensions for " +
+                        "values-sw${bucket.minWidthDp}dp " +
+                        "(${bucket.minWidthDp}/2560)"
+                )
+            }
+        }
 
         return outputs
     }

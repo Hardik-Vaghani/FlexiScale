@@ -1,53 +1,50 @@
 package io.github.hardikvaghani.flexiscale.runtime.model
 
-enum class ScreenBucket(
+data class ScreenBucket(
     val minWidthDp: Int,
     val description: String
 ) {
 
-    SW192(192, "Small Wear OS"),
-    SW240(240, "Large Wear OS"),
-
-    SW280(280, "Compact Wear / Tiny Phone"),
-    SW300(300, "Legacy Small Phone"),
-    SW320(320, "Small Phone"),
-    SW330(330, "Compact Phone"),
-
-    SW360(360, "Standard Phone"),
-    SW390(390, "Modern Compact Phone"),
-    SW411(411, "Large Phone"),
-    SW420(420, "Modern Large Phone"),
-    SW450(450, "XL Phone"),
-    SW480(480, "Foldable Folded"),
-
-    SW510(510, "Foldable Compact"),
-    SW540(540, "Foldable Expanded"),
-    SW570(570, "Large Foldable"),
-    SW600(600, "Tablet"),
-
-    SW640(640, "Compact Tablet"),
-    SW680(680, "Medium Tablet"),
-    SW720(720, "Large Tablet"),
-    SW760(760, "Tablet Landscape"),
-    SW800(800, "XL Tablet"),
-    SW840(840, "Chromebook"),
-
-    SW900(900, "Desktop Compact"),
-    SW960(960, "Desktop"),
-    SW1024(1024, "Desktop Small"),
-    SW1080(1080, "Desktop Medium"),
-
-    SW1200(1200, "Desktop Large"),
-    SW1280(1280, "Desktop XL"),
-    SW1366(1366, "Laptop Wide"),
-    SW1440(1440, "Ultra Wide"),
-
-    SW1600(1600, "Large Desktop"),
-    SW1920(1920, "TV"),
-    SW2560(2560, "Ultra Wide Monitor");
-
     companion object {
-        val valuesSorted =
-            entries.sortedBy { it.minWidthDp }
+
+        val allBuckets: List<ScreenBucket> by lazy {
+            (192..2560).map { sw ->
+                ScreenBucket(
+                    minWidthDp = sw,
+                    description = descriptionFor(sw)
+                )
+            }
+        }
+
+        private fun descriptionFor(
+            sw: Int
+        ): String =
+
+            when (sw) {
+                in 192..239 -> "Small Wear OS"
+                in 240..279 -> "Large Wear OS"
+
+                in 280..299 -> "Compact Wear / Tiny Phone"
+                in 300..319 -> "Legacy Small Phone"
+                in 320..359 -> "Small Phone"
+
+                in 360..410 -> "Standard Phone"
+                in 411..479 -> "Large Phone"
+                in 480..599 -> "Foldable"
+
+                in 600..719 -> "Tablet"
+                in 720..839 -> "Large Tablet"
+
+                in 840..959 -> "Chromebook"
+                in 960..1199 -> "Desktop"
+
+                in 1200..1439 -> "Desktop Large"
+                in 1440..1599 -> "Ultra Wide"
+
+                in 1600..1919 -> "Large Desktop"
+                in 1920..2559 -> "TV"
+
+                else -> "Ultra Wide Monitor"
+            }
     }
 }

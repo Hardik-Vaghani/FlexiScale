@@ -9,10 +9,10 @@ object ScreenBucketResolver {
     ): ScreenBucket {
 
         return ScreenBucket
-            .valuesSorted
+            .allBuckets
             .lastOrNull {
                 smallestWidthDp >= it.minWidthDp
             }
-            ?: ScreenBucket.SW192
+            ?: ScreenBucket.allBuckets.first()
     }
 }

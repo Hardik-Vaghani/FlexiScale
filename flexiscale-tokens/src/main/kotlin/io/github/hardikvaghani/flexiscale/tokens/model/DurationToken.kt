@@ -1,4 +1,6 @@
-package model
+package io.github.hardikvaghani.flexiscale.tokens.model
 
-class DurationToken {
-}
+@JvmInline
+value class DurationToken(
+    val millis: Long
+)

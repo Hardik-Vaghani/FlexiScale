@@ -1,4 +1,6 @@
-package model
+package io.github.hardikvaghani.flexiscale.tokens.model
 
-class DimensionToken {
-}
+@JvmInline
+value class DimensionToken(
+    val value: Double
+)

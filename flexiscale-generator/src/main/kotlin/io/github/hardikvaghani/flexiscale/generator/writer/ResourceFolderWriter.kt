@@ -14,25 +14,31 @@ class ResourceFolderWriter(
         outputs: List<BucketOutput>
     ) {
 
-        outputs.forEach {
-
-            val folder =
-                outputDirectory
-                    .resolve(it.folderName)
-                    .toFile()
-
-            if (!folder.exists()) {
-                folder.mkdirs()
-            }
-
-            val xmlFile =
-                folder.resolve(
-                    it.fileName
-                )
-
-            xmlFile.writeText(
-                xmlWriter.write(it)
-            )
+        outputs.forEach { output ->
+            writeSingle(output)
         }
+    }
+
+    fun writeSingle(
+        output: BucketOutput
+    ) {
+
+        val folder =
+            outputDirectory
+                .resolve(output.folderName)
+                .toFile()
+
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+
+        val xmlFile =
+            folder.resolve(
+                output.fileName
+            )
+
+        xmlFile.writeText(
+            xmlWriter.write(output)
+        )
     }
 }

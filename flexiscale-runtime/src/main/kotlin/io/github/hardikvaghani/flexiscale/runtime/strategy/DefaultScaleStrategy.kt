@@ -5,7 +5,59 @@ import io.github.hardikvaghani.flexiscale.runtime.model.ScreenBucket
 
 object DefaultScaleStrategy : ScaleStrategy {
 
-    private val profiles = mapOf(
+    private const val ANCHOR_SW = 360
+    private const val MAX_SW = 2560
+    private const val MIN_SW = 192
+
+    // dpScale = 1.0 at SW360, 3.20 at SW2560
+    private const val DP_AT_ANCHOR = 1.0
+    private const val DP_AT_MAX = 3.20
+
+    // spScale = 1.0 at SW360, 1.70 at SW2560
+    private const val SP_AT_ANCHOR = 1.0
+    private const val SP_AT_MAX = 1.70
+
+    // spScale = 0.82 at SW192 (minimum)
+    private const val SP_AT_MIN = 0.82
+
+    override fun profile(
+        bucket: ScreenBucket
+    ): ScaleProfile {
+
+        val sw = bucket.minWidthDp
+
+        val dpScale =
+            if (sw <= ANCHOR_SW) {
+                sw.toDouble() / ANCHOR_SW
+            } else {
+                DP_AT_ANCHOR +
+                    (sw - ANCHOR_SW).toDouble() /
+                    (MAX_SW - ANCHOR_SW) *
+                    (DP_AT_MAX - DP_AT_ANCHOR)
+            }
+
+        val spScale =
+            if (sw <= ANCHOR_SW) {
+                SP_AT_MIN +
+                    (sw - MIN_SW).toDouble() /
+                    (ANCHOR_SW - MIN_SW) *
+                    (SP_AT_ANCHOR - SP_AT_MIN)
+            } else {
+                SP_AT_ANCHOR +
+                    (sw - ANCHOR_SW).toDouble() /
+                    (MAX_SW - ANCHOR_SW) *
+                    (SP_AT_MAX - SP_AT_ANCHOR)
+            }
+
+        return ScaleProfile(
+            dpScale = dpScale,
+            spScale = spScale
+        )
+    }
+}
+/*
+*
+  private val profiles = mapOf(
 
         ScreenBucket.SW192 to ScaleProfile(0.55, 0.82),
         ScreenBucket.SW240 to ScaleProfile(0.70, 0.88),
@@ -58,4 +110,4 @@ object DefaultScaleStrategy : ScaleStrategy {
                 "No ScaleProfile found for bucket: $bucket"
             )
     }
-}
+* */

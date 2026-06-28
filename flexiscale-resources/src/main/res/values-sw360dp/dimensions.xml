@@ -19997,5 +19997,9 @@
 <dimen name="app_px_499_90_to_dp_neg">-499.90000dp</dimen>
 <dimen name="app_px_499_90_to_sp">499.90000sp</dimen>
 <dimen name="app_px_499_90_to_sp_neg">-499.90000sp</dimen>
+<dimen name="app_px_500_00_to_dp">500.00000dp</dimen>
+<dimen name="app_px_500_00_to_dp_neg">-500.00000dp</dimen>
+<dimen name="app_px_500_00_to_sp">500.00000sp</dimen>
+<dimen name="app_px_500_00_to_sp_neg">-500.00000sp</dimen>
 
 </resources>

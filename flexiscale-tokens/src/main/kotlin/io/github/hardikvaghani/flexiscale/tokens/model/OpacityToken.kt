@@ -1,4 +1,6 @@
-package model
+package io.github.hardikvaghani.flexiscale.tokens.model
 
-class OpacityToken {
-}
+@JvmInline
+value class OpacityToken(
+    val value: Double
+)
