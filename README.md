@@ -1,133 +1,261 @@
 # FlexiScale
 
-[![CI](https://github.com/hardikvaghani/flexiscale/actions/workflows/ci.yml/badge.svg)](https://github.com/hardikvaghani/flexiscale/actions/workflows/ci.yml)
+[![CI](https://github.com/hardik-vaghani/flexiscale/actions/workflows/ci.yml/badge.svg)](https://github.com/hardik-vaghani/flexiscale/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.hardikvaghani.flexiscale/flexiscale-runtime)](https://central.sonatype.com/namespace/io.github.hardikvaghani.flexiscale)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.0-purple.svg)](https://kotlinlang.org)
 
 A **responsive UI scaling library for Android** — providing consistent scaling across all form factors from Wear OS (192dp) to Ultra Wide Monitors (2560dp).
 
-Supports XML Developers, Jetpack Compose Developers, and Kotlin/Java Developers.
+FlexiScale automatically adapts your UI dimensions to the device's screen width using a formula-based scaling engine, pre-generated XML resources, and Jetpack Compose extensions.
 
 ---
 
-## Project Structure
-
-```
-FlexiScale/
-├── build.gradle.kts                  # Root build — declares plugins + group/version
-├── settings.gradle.kts               # Project name, repository config, module declarations
-├── gradle.properties                 # Build cache & configuration cache
-├── gradle/
-│   ├── libs.versions.toml            # Version catalog (Kotlin, kotlinx libraries)
-│   └── wrapper/
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
-├── .github/workflows/
-│   └── ci.yml                        # GitHub Actions CI with Android SDK
-│
-├── flexiscale-runtime/               # Core scaling engine (JVM, published)
-├── flexiscale-generator/             # XML resource generator (JVM, internal tool)
-├── flexiscale-tokens/                # Design system tokens (JVM, published)
-├── flexiscale-resources/             # Android resources module (generated XML)
-└── flexiscale-compose/               # Compose integration layer (Android, published)
-```
-
-## Modules
-
-| Module | Type | Published | Description |
-|--------|------|-----------|-------------|
-| `:flexiscale-runtime` | JVM | ✅ Planned | Core scaling engine — `ScreenBucket`, `ScaleProfile`, `ResponsiveScaler`, `DefaultScaleStrategy` (formula-based) |
-| `:flexiscale-generator` | JVM | ❌ No | Internal tool — generates `dimensions.xml` for all 2369 screen buckets |
-| `:flexiscale-tokens` | JVM | ✅ Planned | Design system tokens — spacing, typography, radius, elevation, size, icon, motion, opacity, stroke, accessibility |
-| `:flexiscale-resources` | Android | ❌ No | Generated XML dimension resources — 33 bucket folders, ~660K dimension entries |
-| `:flexiscale-compose` | Android | ✅ Planned | Compose integration — `.fdp()`, `.fsp()` composable extensions |
-
 ## Features
 
-- **2369 screen width buckets** — every integer from 192dp to 2560dp with formula-based scale profiles
-- **dpScale & spScale** — separate linear interpolation formulas for density-independent and scale-independent pixels
-- **Extensible strategy pattern** — `ScaleStrategy` interface for custom scaling logic
-- **Design tokens** — complete design system with 9 token categories
-- **XML resources** — pre-generated `@dimen/` resources for all screen buckets
-- **Compose extensions** — `.fdp()`, `.fsp()` for Jetpack Compose
+- **2369 screen width buckets** — every integer from 192dp to 2560dp with optimized scale profiles
+- **Formula-based scaling** — linear interpolation for dp and sp values
+- **Jetpack Compose support** — `.fdp()` and `.fsp()` composable extensions
+- **XML/View support** — pre-generated `@dimen/` resources for all buckets
+- **Design tokens** — spacing, typography, radius, elevation, size, icon, motion, opacity, stroke, and accessibility
+- **Extensible strategies** — implement `ScaleStrategy` for custom scaling logic
+- **Multi-module** — use only what you need
 
-## Test Status
+## Why FlexiScale?
 
-| Module | Tests | Status |
-|--------|-------|--------|
-| flexiscale-runtime | 16 | ✅ All passing |
-| flexiscale-generator | 10 | ✅ All passing |
-| flexiscale-tokens | 8 | ✅ All passing |
-| flexiscale-compose | 2 | ✅ (runtime-only, requires Android SDK) |
-| flexiscale-resources | 4 | ✅ (requires Android SDK) |
-| **Total** | **40** | **✅ All passing** |
+Traditional Android scaling approaches either lack precision (density buckets) or require manual calculation. FlexiScale provides:
 
-## Prerequisites
+| Approach | Precision | Automation | Compose | XML |
+|----------|-----------|------------|---------|-----|
+| Density buckets (mdpi/hdpi/xhdpi) | ❌ Coarse | ✅ Auto | ❌ | ✅ |
+| sdp/ssp library | ✅ Fine | ✅ Auto | ❌ | ✅ |
+| **FlexiScale** | **✅ Precise** | **✅ Auto** | **✅ Yes** | **✅ Yes** |
 
-- **JDK 21+** (automatically resolved via the Foojay Toolchains plugin if not installed locally)
-- **Android SDK** (for `:flexiscale-compose` and `:flexiscale-resources` modules)
-- No manual Gradle installation needed — use the Gradle Wrapper (`./gradlew`)
+## Installation
 
-## Build & Test
+Add the dependency to your module's `build.gradle.kts`:
 
-```bash
-# Build all JVM modules (runtime, generator, tokens)
-./gradlew build
+```kotlin
+dependencies {
+    // For Compose support
+    implementation("io.github.hardikvaghani.flexiscale:flexiscale-compose:0.1.0")
 
-# Run all tests (JVM modules)
-./gradlew test
+    // For XML/View support
+    implementation("io.github.hardikvaghani.flexiscale:flexiscale-resources:0.1.0")
 
-# Run all tests including Android modules (requires Android SDK)
-./gradlew build
+    // Core runtime only (if you need programmatic scaling)
+    implementation("io.github.hardikvaghani.flexiscale:flexiscale-runtime:0.1.0")
 
-# Run specific module tests
-./gradlew :flexiscale-runtime:test
-./gradlew :flexiscale-generator:test
-./gradlew :flexiscale-tokens:test
-
-# Generate XML resources
-./gradlew :flexiscale-generator:run
-
-# Clean all build outputs
-./gradlew clean
+    // Design system tokens
+    implementation("io.github.hardikvaghani.flexiscale:flexiscale-tokens:0.1.0")
+}
 ```
 
-> **Note:** The project uses the Gradle Wrapper (`./gradlew`), which automatically downloads the correct Gradle version.
+### Version Catalog
 
-## Tech Stack
+```toml
+[versions]
+flexiscale = "0.1.0"
 
-- **Language:** Kotlin 2.2.0
-- **JDK:** 21
-- **Build System:** Gradle 8.14 (via Wrapper)
-- **Android Plugin:** AGP 8.13.0
-- **Testing:** kotlin.test + JUnit 4 (Android modules)
-- **Available libraries (via version catalog):**
-  - [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime)
-  - [kotlinx-serialization-json](https://github.com/Kotlin/kotlinx-serialization)
-  - [kotlinx-coroutines](https://github.com/Kotlin/kotlinx-coroutines)
+[libraries]
+flexiscale-compose = { module = "io.github.hardikvaghani.flexiscale:flexiscale-compose", version.ref = "flexiscale" }
+flexiscale-runtime = { module = "io.github.hardikvaghani.flexiscale:flexiscale-runtime", version.ref = "flexiscale" }
+flexiscale-tokens = { module = "io.github.hardikvaghani.flexiscale:flexiscale-tokens", version.ref = "flexiscale" }
+flexiscale-resources = { module = "io.github.hardikvaghani.flexiscale:flexiscale-resources", version.ref = "flexiscale" }
+```
+
+## Usage
+
+### Jetpack Compose
+
+```kotlin
+import io.github.hardikvaghani.flexiscale.compose.extensions.fdp
+import io.github.hardikvaghani.flexiscale.compose.extensions.fsp
+
+@Composable
+fun ResponsiveCard() {
+    Text(
+        text = "Hello, FlexiScale!",
+        fontSize = 16.fsp(),      // Scales with screen width
+        modifier = Modifier
+            .padding(16.fdp())     // Scales with screen width
+            .width(200.fdp())      // Scales with screen width
+    )
+}
+```
+
+### XML / View System
+
+```xml
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/flexi_sp_16"
+    android:padding="@dimen/flexi_dp_16" />
+```
+
+### Programmatic Scaling
+
+```kotlin
+import io.github.hardikvaghani.flexiscale.runtime.FlexiScale
+
+// Scale 16dp for a device with 411dp smallest width
+val scaledDp = FlexiScale.dp(smallestWidthDp = 411, value = 16.0)
+
+// Scale 14sp for a device with 360dp smallest width
+val scaledSp = FlexiScale.sp(smallestWidthDp = 360, value = 14.0)
+
+// Or pass a ScreenInfo object
+val info = ScreenInfo(smallestWidthDp = 411, widthDp = 411, heightDp = 900)
+val result = FlexiScale.dp(screenInfo = info, value = 16.0)
+```
+
+### Custom Scaling Strategy
+
+```kotlin
+import io.github.hardikvaghani.flexiscale.runtime.strategy.ScaleStrategy
+import io.github.hardikvaghani.flexiscale.runtime.model.ScreenBucket
+
+class MyCustomStrategy : ScaleStrategy {
+    override fun dpScale(bucket: ScreenBucket): Double {
+        // Custom scaling logic
+        return bucket.minWidthDp / 360.0
+    }
+
+    override fun spScale(bucket: ScreenBucket): Double {
+        // Custom scaling logic
+        return bucket.minWidthDp / 360.0
+    }
+}
+```
+
+## Screen Buckets
+
+FlexiScale defines 2369 screen width buckets covering every integer from 192dp to 2560dp:
+
+| Range | Category | Example Devices |
+|-------|----------|----------------|
+| 192–239 | Small Wear OS | Smartwatches |
+| 240–279 | Large Wear OS | Smartwatches |
+| 280–319 | Compact Phone | Small form-factor phones |
+| 320–359 | Small Phone | iPhone SE, older Androids |
+| 360–410 | Standard Phone | Pixel, Galaxy series |
+| 411–479 | Large Phone | Galaxy Ultra, iPhone Pro Max |
+| 480–599 | Foldable | Galaxy Fold, Pixel Fold |
+| 600–719 | Tablet | iPad Mini, Galaxy Tab |
+| 720–839 | Large Tablet | iPad, Galaxy Tab Plus |
+| 840–959 | Chromebook | Pixelbook, Chromebooks |
+| 960–1199 | Desktop | Desktop windows |
+| 1200–1599 | Ultra Wide | Ultra-wide monitors |
+| 1600–2560 | TV/Large Desktop | 4K TVs, large monitors |
 
 ## Scaling Formula
 
-`DefaultScaleStrategy` uses linear interpolation:
+`DefaultScaleStrategy` applies linear interpolation:
 
 | Range | dpScale | spScale |
 |-------|---------|---------|
 | 192 → 360dp | `sw / 360` | `0.82 → 1.0` (linear) |
 | 360 → 2560dp | `1.0 → 3.20` (linear) | `1.0 → 1.70` (linear) |
 
-## Configuration
+## Modules
 
-- **Version catalog:** `gradle/libs.versions.toml` — centralizes all dependency versions
-- **Build cache:** Enabled in `gradle.properties` for faster rebuilds
-- **Configuration cache:** Enabled in `gradle.properties` (reuses build configuration across runs)
-- **CI/CD:** GitHub Actions workflow in `.github/workflows/ci.yml` — builds and tests all modules with Android SDK
+| Module | Published | Description |
+|--------|-----------|-------------|
+| `flexiscale-runtime` | ✅ Maven Central | Core scaling engine |
+| `flexiscale-tokens` | ✅ Maven Central | Design system tokens |
+| `flexiscale-compose` | ✅ Maven Central | Compose extensions |
+| `flexiscale-resources` | ✅ Maven Central | XML dimension resources |
+| `flexiscale-generator` | ❌ Internal | XML resource generator |
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│            flexiscale-compose                │
+│  .fdp() / .fsp() composable extensions      │
+├─────────────────────────────────────────────┤
+│            flexiscale-resources              │
+│  @dimen/flexi_dp_* / @dimen/flexi_sp_*      │
+├───────────────────────┬─────────────────────┤
+│   flexiscale-runtime  │  flexiscale-tokens   │
+│   ScreenBucket        │  Spacing, Typography │
+│   ScaleStrategy       │  Radius, Elevation   │
+│   ResponsiveScaler    │  Motion, Opacity     │
+│   ScreenInfo          │  Size, Icon, Stroke  │
+└───────────────────────┴─────────────────────┘
+```
+
+## Build & Test
+
+```bash
+# Build all JVM modules
+./gradlew build
+
+# Run all JVM tests
+./gradlew test
+
+# Publish to local Maven
+./gradlew publishToMavenLocal
+
+# Generate XML resources
+./gradlew :flexiscale-generator:run
+```
+
+## Tech Stack
+
+- **Language:** Kotlin 2.2.0
+- **JDK:** 21
+- **Build System:** Gradle 8.14
+- **Android Plugin:** AGP 8.13.0
+- **Testing:** kotlin.test
+- **Metadata:** Apache 2.0 License
+
+## FAQ
+
+**Q: How is this different from sdp/ssp?**
+A: FlexiScale provides the same precision but adds first-class Compose support, design tokens, and a pluggable strategy system.
+
+**Q: Do I need all modules?**
+A: No. Use only what you need — runtime only, Compose + runtime, or XML resources only.
+
+**Q: Is it production-ready?**
+A: The library is in active development (v0.1.0). Core APIs are stable.
 
 ## Roadmap
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| **Phase 1** | Runtime | ✅ Complete |
-| **Phase 2** | Generator | ✅ Substantially complete |
-| **Phase 3** | Tokens Resource Generation | ⏳ In progress |
-| **Phase 4** | Compose APIs | ⏳ In progress |
-| **Phase 5** | Maven Central Publishing | ❌ Not started |
-| **Phase 6** | Documentation | ⏳ In progress |
-| **Phase 7** | Sample Apps | ❌ Not started |
+- [ ] Sample apps (Compose + XML)
+- [ ] Animation/transition support
+- [ ] Custom theme integration
+- [ ] R8/ProGuard rules
+- [ ] Compose Multiplatform support
+
+## License
+
+```
+Copyright 2025 Hardik Vaghani
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+## Acknowledgements
+
+- [sdp](https://github.com/intuit/sdp) / [ssp](https://github.com/intuit/ssp) — inspiration for the Android dimension scaling approach
+- JetBrains — Kotlin and tooling
+- Google — Android Jetpack Compose
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/hardik-vaghani">Hardik Vaghani</a>
+</p>

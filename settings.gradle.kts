@@ -19,6 +19,8 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    includeBuild("build-logic")
 }
 
 dependencyResolutionManagement {
@@ -41,10 +43,6 @@ include(
     ":flexiscale-runtime",
     ":flexiscale-compose",
     ":flexiscale-generator",
-    ":flexiscale-tokens"
+    ":flexiscale-tokens",
+    ":flexiscale-resources"
 )
-//include("flexiscale-runtime")
-//include("flexiscale-compose")
-//include("flexiscale-generator")
-//include("flexiscale-tokens")
-include("flexiscale-resources")

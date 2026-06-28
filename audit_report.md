@@ -8,19 +8,19 @@
 
 ## 1. Project Overview
 
-| Metric | Value |
-|--------|-------|
+| Metric | Value                                              |
+|--------|----------------------------------------------------|
 | **Modules** | 5 (runtime, generator, compose, tokens, resources) |
-| **Kotlin source files** | 47 main + 14 test = **61 total** |
-| **Total tests (@Test annotations)** | **40** |
-| **Build scripts** | 7 (1 root + 5 module + 1 settings) |
-| **XML resource folders** | 2,143 (`values-swXXXdp`) |
-| **XML dimension files** | 2,142 (1 missing — SW2334) |
-| **Total XML resource size** | **~2.2 GB** |
-| **Technology** | Kotlin 2.2.0, JDK 21, Gradle 8.14 |
-| **Group** | `io.github.hardikvaghani.flexiscale` |
-| **Version** | `0.1.0-SNAPSHOT` ✅ |
-| **Git commits** | 7 (all on `main` branch) |
+| **Kotlin source files** | 47 main + 14 test = **61 total**                   |
+| **Total tests (@Test annotations)** | **40**                                             |
+| **Build scripts** | 7 (1 root + 5 module + 1 settings)                 |
+| **XML resource folders** | 2,143 (`values-swXXXdp`)                           |
+| **XML dimension files** | 2,142 (1 missing — SW2334)                         |
+| **Total XML resource size** | **~2.2 GB**                                        |
+| **Technology** | Kotlin 2.2.0, JDK 21, Gradle 8.14                  |
+| **Group** | `io.github.hardik-vaghani.flexiscale`              |
+| **Version** | `0.1.0-SNAPSHOT` ✅                                 |
+| **Git commits** | 7 (all on `main` branch)                           |
 
 ---
 

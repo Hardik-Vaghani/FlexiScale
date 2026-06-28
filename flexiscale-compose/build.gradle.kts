@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    //kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("publishing-conventions")
 }
 
 android {
@@ -43,5 +43,3 @@ dependencies {
 //tasks.test { useJUnitPlatform() }
 
 kotlin { jvmToolchain(21) }
-
-//To test your abilities 100% successfully by using this './gradlew :flexiscale-compose:tasks'

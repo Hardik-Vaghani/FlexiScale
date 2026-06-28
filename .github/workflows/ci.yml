@@ -2,71 +2,58 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  build:
+    name: Build & Test
     runs-on: ubuntu-latest
-    timeout-minutes: 30
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 21
 
-      - name: Setup Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Export ANDROID_HOME
-        run: echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
-
-      - name: Install required SDK components
-        run: |
-          sdkmanager \
-            "platforms;android-36" \
-            "build-tools;36.0.0" \
-            --sdk_root=$ANDROID_SDK_ROOT
-
-      - name: Cache Gradle dependencies
+      - name: Cache Gradle
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', '**/settings.gradle.kts', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
-            gradle-${{ runner.os }}-
+            ${{ runner.os }}-gradle-
 
-      - name: Cache Android SDK
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.ANDROID_SDK_ROOT }}/platforms
-            ${{ env.ANDROID_SDK_ROOT }}/build-tools
-          key: android-sdk-${{ runner.os }}-36
-
-      - name: Grant execute permission for Gradle wrapper
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build and test all modules
-        run: ./gradlew build --stacktrace --no-daemon
+      - name: Build JVM modules
+        run: ./gradlew :flexiscale-runtime:build :flexiscale-generator:build :flexiscale-tokens:build
 
-      - name: Upload test reports on failure
-        if: failure()
+      - name: Run JVM tests
+        run: ./gradlew :flexiscale-runtime:test :flexiscale-generator:test :flexiscale-tokens:test
+
+      - name: Build Android modules
+        run: ./gradlew :flexiscale-compose:assembleDebug :flexiscale-resources:assembleDebug
+
+      - name: Upload build reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports
+          name: build-reports
           path: |
-            **/build/reports/tests/
-            **/build/outputs/
-          retention-days: 7
+            **/build/reports/

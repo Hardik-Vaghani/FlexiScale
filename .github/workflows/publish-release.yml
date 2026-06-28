@@ -1,0 +1,49 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    name: Publish Release to Maven Central
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'hardik-vaghani'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Verify version matches tag
+        run: |
+          VERSION=$(grep "version = " build.gradle.kts | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          TAG=${GITHUB_REF#refs/tags/v}
+          if [ "$VERSION" != "$TAG" ]; then
+            echo "Version mismatch: build.gradle.kts=$VERSION, tag=$TAG"
+            exit 1
+          fi
+
+      - name: Publish to Maven Central
+        run: ./gradlew publish
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUser: ${{ secrets.SONATYPE_USER }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
